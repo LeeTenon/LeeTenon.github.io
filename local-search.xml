@@ -4,7 +4,7 @@
   
   
   <entry>
-    <title>编程经验与规范</title>
+    <title>C++基础</title>
     <link href="/2022/06/28/C++/C++/"/>
     <url>/2022/06/28/C++/C++/</url>
     
@@ -13,14 +13,14 @@
     
     <categories>
       
-      <category>GO</category>
+      <category>C++</category>
       
     </categories>
     
     
     <tags>
       
-      <tag>经验</tag>
+      <tag>编程基础</tag>
       
     </tags>
     
@@ -29,7 +29,7 @@
   
   
   <entry>
-    <title>编程经验与规范</title>
+    <title>Effective C++</title>
     <link href="/2022/06/28/C++/Effective%20C++/"/>
     <url>/2022/06/28/C++/Effective%20C++/</url>
     
@@ -38,14 +38,14 @@
     
     <categories>
       
-      <category>GO</category>
+      <category>C++</category>
       
     </categories>
     
     
     <tags>
       
-      <tag>经验</tag>
+      <tag>书籍</tag>
       
     </tags>
     
