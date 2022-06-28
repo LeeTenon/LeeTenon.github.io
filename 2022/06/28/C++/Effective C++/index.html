@@ -1,0 +1,975 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/header.png">
+  <link rel="icon" href="/img/header.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Tenon Lee">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="基本习惯 使用const或enums定义常量，减少#defines的使用  形似函数的宏，最好使用inline替换#defines  尽可能使用const：成员函数、static对象等  const和non-const成员函数避免重复 123456789101112131415class TextBlock &amp;#123;private:    ...public:    ...    const">
+<meta property="og:type" content="article">
+<meta property="og:title" content="编程经验与规范">
+<meta property="og:url" content="http://example.com/2022/06/28/C++/Effective%20C++/index.html">
+<meta property="og:site_name" content="Tenon Blog">
+<meta property="og:description" content="基本习惯 使用const或enums定义常量，减少#defines的使用  形似函数的宏，最好使用inline替换#defines  尽可能使用const：成员函数、static对象等  const和non-const成员函数避免重复 123456789101112131415class TextBlock &amp;#123;private:    ...public:    ...    const">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-28T14:12:17.262Z">
+<meta property="article:modified_time" content="2022-06-28T14:13:11.027Z">
+<meta property="article:author" content="Tenon Lee">
+<meta property="article:tag" content="经验">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>编程经验与规范 - Tenon Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Tenon</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/index.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="编程经验与规范"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-06-28 22:12" pubdate>
+          2022年6月28日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          41 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">编程经验与规范</h1>
+            
+            <div class="markdown-body">
+              
+              <h1 id="基本习惯"><a href="#基本习惯" class="headerlink" title="基本习惯"></a>基本习惯</h1><ol>
+<li><p>使用<code>const</code>或<code>enums</code>定义常量，减少<code>#defines</code>的使用</p>
+</li>
+<li><p>形似函数的宏，最好使用<code>inline</code>替换<code>#defines</code></p>
+</li>
+<li><p>尽可能使用const：成员函数、static对象等</p>
+<ul>
+<li><p><code>const</code>和<code>non-const</code>成员函数避免重复</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">TextBlock</span> &#123;<br><span class="hljs-keyword">private</span>:<br>    ...<br><span class="hljs-keyword">public</span>:<br>    ...<br>    <span class="hljs-type">const</span> <span class="hljs-type">char</span>&amp; <span class="hljs-keyword">operator</span>[] (std::<span class="hljs-type">size_t</span> position) <span class="hljs-type">const</span><br>    &#123;<br>        ...<br>        <span class="hljs-keyword">return</span> text[position];<br>    &#125;<br>    <span class="hljs-type">char</span>&amp; <span class="hljs-keyword">operator</span>[] (std::<span class="hljs-type">size_t</span> position) <br>    &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">const_cast</span>(<span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">const</span> TextBlock&amp;&gt;(*<span class="hljs-keyword">this</span>)[position]);<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p><code>const</code>帮助编译器侦测出错用法。</p>
+</li>
+</ul>
+</li>
+<li><p>确保对象使用前已经被初始化</p>
+<ul>
+<li>内置类型对象需要手工初始化，C++不保证初始化他它们。</li>
+<li>构造函数最好使用成员初值列，而不是赋值操作，且其排列次序应与声明次序一致。</li>
+<li>对于“跨编译单元初始化次序问题”，应以<code>local static</code>对象替换<code>non-local static</code>对象。</li>
+</ul>
+</li>
+</ol>
+<h1 id="构造、析构与赋值"><a href="#构造、析构与赋值" class="headerlink" title="构造、析构与赋值"></a>构造、析构与赋值</h1><ol>
+<li><p>认真对待<code>default构造、copy构造、copy操作符及析构函数</code></p>
+<ul>
+<li><p>对于<code>指针、const</code>等特殊成员的操作需要自行定义。</p>
+</li>
+<li><p>对于需要阻止的操作，如<code>copy</code>， 可以选择将会自行生产的函数定义为<code>private</code>，但选择<code>empty base class optimization</code>继承是更好的行为。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">// 符合empty base class optimization要求的基类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Uncopyable</span> &#123;	<br><span class="hljs-keyword">protected</span>:	<span class="hljs-comment">// 允许derived对象构造和析构</span><br>    <span class="hljs-built_in">Uncopyable</span>() &#123;&#125;<br>    ~<span class="hljs-built_in">Uncopyable</span>() &#123;&#125;<br><span class="hljs-keyword">private</span>:	<span class="hljs-comment">// 阻止复制</span><br>    <span class="hljs-built_in">Uncopyable</span>(<span class="hljs-type">const</span> Uncopyable&amp;);<br>    Uncopyable&amp; <span class="hljs-keyword">operator</span>=(<span class="hljs-type">const</span> Uncopyable&amp;);<br>&#125;;<br></code></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>为多态基类声明virtual析构函数】</p>
+<ul>
+<li><p><code>polimorphic（多态性的） base classes</code>应该声明一个virtual析构函数。</p>
+</li>
+<li><p>class带有任何virtual函数，它就应该拥有一个virtual析构函数。</p>
+</li>
+<li><p>对于抽象的class，使用<code>pure virtual</code>析构函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">AWOV</span> &#123;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">virtual</span> ~<span class="hljs-built_in">AWOV</span>() = <span class="hljs-number">0</span>;<br>&#125;;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>classes的设计目的不是作为base classes使用的，就不应该声明virtual析构函数，请勿滥用virtual。</p>
+</li>
+</ul>
+</li>
+<li><p>不要在构造和析构过程中调用virtual函数</p>
+<blockquote>
+<p>构造和析构阶段的virtual调用不会下降到derived classes，应该使用传参的方式，将必要信息传递至base classes的构造函数中处理，同时对于调用的兄弟成员函数应该使用static保证预初始化。</p>
+</blockquote>
+</li>
+<li><p>operator&#x3D;</p>
+<ul>
+<li><p>令<code>operator</code>返回一个<code>reference to *this</code>。</p>
+</li>
+<li><p>确保自我赋值的正确性，拥有异常安全性（函数操作多个对象，而多个对象其实是同一个对象时）。</p>
+<blockquote>
+<p>主要可以通过地址对比、语句顺序编排、copy-and-swap解决</p>
+</blockquote>
+</li>
+<li><p>复制时，确保赋值对象的所有成员变量及base class成分（通常通过其copy函数实现）。</p>
+</li>
+<li><p>coping函数应注意消除重复代码，通常将相同的部分放入命名为init的函数供连个coping函数调用。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h1 id="资源管理"><a href="#资源管理" class="headerlink" title="资源管理"></a>资源管理</h1><ol>
+<li><p>以对象管理资源</p>
+<ul>
+<li><p>获得资源后立刻放进管理对象。</p>
+</li>
+<li><p>管理对象利用析构函数确保资源被释放。</p>
+</li>
+<li><p>智能指针<code>trl::auto_ptr</code>、<code>trl::shared_ptr</code>的使用。</p>
+<blockquote>
+<p>资源管理类的脊柱：<code>Resource Acquisition Is Initialization</code></p>
+<p>auto_ptr在复制时会置源为null。保证指向唯一。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>资源管理器</p>
+<ol>
+<li><p>小心coping行为：常见的方式为禁止复制和使用“引用计数法”。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Lock</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">Lock</span><span class="hljs-params">(Mutex* pm)</span></span><br><span class="hljs-function">        : mutexPtr(pm, unlock)</span><br><span class="hljs-function">    &#123;</span><br>        <span class="hljs-built_in">lock</span>(mutexPtr.<span class="hljs-built_in">get</span>());<br>    &#125;<br><span class="hljs-keyword">private</span>:<br>    shared_ptr&lt;mutex&gt; mutexPtr;<br>&#125;;<br><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>提供对原始资源的访问</p>
+</li>
+</ol>
+</li>
+<li><p>成对使用<code>new</code>和<code>delete</code>且保证采取相同形式</p>
+</li>
+<li><p>以独立语句将<code>newed</code>对象置入智能指针</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">std::shared_ptr&lt;Widget&gt; <span class="hljs-title">pw</span><span class="hljs-params">(<span class="hljs-keyword">new</span> Widget)</span></span>;<br><span class="hljs-built_in">processWidget</span>(pw, <span class="hljs-built_in">priority</span>());<br><span class="hljs-comment">// 因为语句内的参数核算的次序具有不确定性，在生成对象并置入智能指针的过程中，掺杂其他操作，所以可能引起置入操作无法执行，从而造成内存泄漏。</span><br></code></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="设计与声明"><a href="#设计与声明" class="headerlink" title="设计与声明"></a>设计与声明</h1><ol>
+<li><p>让接口容易被正确使用</p>
+<ul>
+<li>减少用户的需要操作的行为数，如手动delete等。</li>
+<li>尽量保证接口一致性，以及与内置类型的行为兼容。</li>
+<li>阻止误用的常见方法：建立新类型、束缚对象值、限制类型上的操作，以及消除用户的资源管理责任。</li>
+</ul>
+</li>
+<li><p>设计class犹如设计type，需要思考以下问题：</p>
+<ul>
+<li>对象应该如何被创建和销毁？</li>
+<li>对象的初始化和对象的赋值有什么样的差别？</li>
+<li>对象被passed by value意味着什么？<code>copy构造函数是用来定义一个type的pass-by-value该如何实现的</code></li>
+<li>新type的合法值是什么？</li>
+<li>新type是否需要配合某个继承图系？</li>
+<li>新type需要怎样的转换？</li>
+<li>新type需要哪些函数？</li>
+<li>谁该取用新type的成员？</li>
+<li>什么是新type的“未声明接口”？</li>
+<li>你的新type有多么一般化？<code>这个问题设计到是定义新class还是新class template</code></li>
+<li>真的需要一个新type吗？</li>
+</ul>
+</li>
+<li><p>在对待非内置；类型及STL的迭代器和函数对象时，用<code>pass-by-reference-to-const</code>替换<code>pass-by-value</code></p>
+<blockquote>
+<p>reference不仅可以省却构造函数和析构函数的效率成本，还可以避免切割（slicing）问题。但记住，对于内置类型、STL的迭代器和函数对象，pass-by-value往往更为高效，因为它们被生来被设计为此。</p>
+</blockquote>
+</li>
+<li><p>必须返回对象时，别妄想返回其<code>reference</code>，绝不要返回指向<code>local stack</code>或<code>heap-allocated</code>对象的<code>reference</code>或<code>pointer</code></p>
+</li>
+<li><p>将成员变量声明为<code>private</code>（封装）</p>
+<blockquote>
+<p>这个问题可以从三个方面讨论：</p>
+<ul>
+<li>一致性问题：使用时不必为了思考是否加圆括号浪费时间。</li>
+<li>权限控制与约束：通过函数对成员变量进行精确控制。</li>
+<li>封装性：通过函数可以对用户异常获取变量的细节，提高弹性。</li>
+</ul>
+<p><code>protected</code>和<code>public</code>具有同样的问题–缺乏封装性，即其中的内容改变时，对用户的影响是不可测的，可能大量的代码需要重写、重测等。</p>
+</blockquote>
+</li>
+<li><p>宁可使用<code>non-member</code>、<code>non-friend</code>函数替换<code>member</code>函数</p>
+<blockquote>
+<p>通常将相关函数分离出去，放置于同一个命名空间中，如此可以减少访问private成员的途径数，增加了封装性、包裹弹性和机能扩充性。</p>
+</blockquote>
+</li>
+<li><p>若所有参数（包括被this指针所指的隐喻参数）皆需要类型转换，请为此采用<code>non-member</code>函数</p>
+</li>
+<li><p>写出一个不抛异常且高效的<code>swap</code>函数</p>
+<blockquote>
+<p>遵循一下步骤去实现：</p>
+<ul>
+<li>当<code>std::swap</code>对你的类型效率不高时，提供一个swap成员函数，并确定该函数不抛出异常。</li>
+<li>提供一个non-member swap来调用成员swap函数，对于classes，请同时特化<code>std::swap</code>。</li>
+<li>调用swap时，应使用<code>using std::swap</code>声明式，然后不带任何命名空间修饰地调用swap。</li>
+<li>为用户自定义类型进行std templates全特化是好的，但别向std内加入新东西！</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><ol>
+<li><p>尽可能延后变量定义式的出现时间</p>
+</li>
+<li><p>尽量少做转型动作，避免<code>dynamic_casts</code>，如若必须，尽量使用C++style转型。</p>
+</li>
+<li><p>避免返回handles（ref、指针、迭代器）指向对象内部成分</p>
+<blockquote>
+<p>究其原因，传出handles使得其被暴露在了比其所指向对象更长寿的风险中，但这并不意味着一定不可向外传播handle。</p>
+</blockquote>
+</li>
+<li><p>为“异常安全”而努力是值得的</p>
+<blockquote>
+<p>异常安全函数：1. 不泄漏任何资源； 2. 不败坏任何数据。</p>
+<p>异常安全函数的三个保证级别：</p>
+<ul>
+<li>基本承诺：所有对象处于内部前后一致的状态，然而程序的现实状态可能不可预料。</li>
+<li>强烈保证：如果异常抛出，则执行回滚，程序状态不改变。</li>
+<li>不抛掷保证：作用于内置类型的所有操作都提供no-throw保证。</li>
+</ul>
+<p>函数提供的“异常安全”通常等于其所调用的各个函数的最弱者。</p>
+</blockquote>
+</li>
+<li><p>留心inlining的使用</p>
+<blockquote>
+<p>遵循两个原则：</p>
+<ul>
+<li>将inline限制在小型、被频繁调用的函数。</li>
+<li>找到关键（主要耗时）代码进行瘦身。</li>
+</ul>
+<p>记住，inline会使得程序的调试和二进制升级变得困难，同时伴随潜在的代码膨胀问题。</p>
+</blockquote>
+</li>
+<li><p><strong>将文件间的编译依存关系降至最低</strong></p>
+<blockquote>
+<p>遵循两个原则：</p>
+<ul>
+<li>相依与声明式，而不是定义式：Handle classes和Interface classes</li>
+<li>程序库头文件应该“完全且仅有声明式”</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<h1 id="继承与面向对象设计"><a href="#继承与面向对象设计" class="headerlink" title="继承与面向对象设计"></a>继承与面向对象设计</h1><ol>
+<li><p>用is-a去塑造public继承</p>
+</li>
+<li><p>避免遮掩继承而来的名称</p>
+<blockquote>
+<p>采取的措施：</p>
+<ul>
+<li>使用using声明式</li>
+<li>使用转交函数（inline）</li>
+</ul>
+</blockquote>
+</li>
+<li><p>区分接口继承和实现继承</p>
+</li>
+<li><p>考虑virtual函数以外的其他选择</p>
+<ul>
+<li>Template Method设计模式：<ul>
+<li>non-virtual interface(NVI)：以public non-virtual函数包裹较低访问性的private或protected的virtual函数</li>
+</ul>
+</li>
+<li>Strategy设计模式<ul>
+<li>以函数指针成员变量替换virtual函数</li>
+<li>以trl::function成员变量替换virtual函数</li>
+<li>不同体系的virtual函数替换</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>绝不重新定义继承而来的non-virtual函数</p>
+</li>
+<li><p>绝不重新定义继承而来的缺省参数值，缺省参数是静态绑定的</p>
+</li>
+<li><p>根据复合塑模出has-a或根据某物实现出</p>
+</li>
+<li><p>明智而审慎地使用private继承</p>
+<blockquote>
+<p>使用场景：</p>
+<ul>
+<li>根据基类的东西实现出时</li>
+<li>为了追求empty-base-optimization（空白基类最优化）时</li>
+</ul>
+</blockquote>
+</li>
+<li><p>明智而审慎地使用多重继承</p>
+<blockquote>
+<p>多重继承会带来歧义、维护等复杂问题，在考虑牺牲空间和速度的情况下，可以采用virtual继承进行“优化”，不能否定多重继承有其独特的应用领域。</p>
+</blockquote>
+</li>
+</ol>
+<h1 id="模板与泛型编程"><a href="#模板与泛型编程" class="headerlink" title="模板与泛型编程"></a>模板与泛型编程</h1><ol>
+<li><p>辨识隐式接口和编译期多态</p>
+<blockquote>
+<p>template提供区别于classes的隐式接口，和区别与virtual函数的编译期多态。</p>
+</blockquote>
+</li>
+<li><p>了解typename的双重意义</p>
+<blockquote>
+<ul>
+<li>前缀关键词class和typername可互换。</li>
+<li>使用typename 标识嵌套从属类型名称，但不能在基类列和成员初始列内作为base class修饰符。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>正确处理模板化基类内的名称</p>
+<blockquote>
+<p>多重模板继承会出现烦人的编译错误，可以通过<code>this-&gt;</code>或<code>base class</code>资格修饰符完成调用。</p>
+</blockquote>
+</li>
+<li><p>将于参数无关的代码抽离templates</p>
+<blockquote>
+<p>思维工具：共性与变性分析。</p>
+<p>代码膨胀的主要原因：类型参数的无复用和非类型参数不适当造成。</p>
+<p>解决方式：</p>
+<ul>
+<li>非类型参数：函数参数和成员变量替换。</li>
+<li>类型参数：带有相同二进制表述的具现类型共享实现码。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>运用成员函数模板接受所有兼容类型</p>
+<blockquote>
+<ul>
+<li>使用member function templates生产兼容（泛化）函数。</li>
+<li>在泛化构造函数或赋值操作时，需要声明正常的相关函数。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>需要类型转换时请为模板定义非成员函数</p>
+</li>
+<li><p>使用traits classes表现类型信息</p>
+<blockquote>
+<p>结合重载技术后，<code>traits classes</code>能在编译期对类型执行<code>if...else</code>测试。</p>
+</blockquote>
+</li>
+<li><p>template元编程</p>
+<blockquote>
+<p>元编程优势：</p>
+<ul>
+<li>将工作由运行期移至编译期，实现早期错误侦测和更高的执行效率。</li>
+<li>可以实现“基于政策选择组合”的定制代码，实现运行期不可能实现的操作。</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<h1 id="定制new和delete"><a href="#定制new和delete" class="headerlink" title="定制new和delete"></a>定制new和delete</h1><ol>
+<li>new-handler</li>
+<li>new和delete的合理替换</li>
+</ol>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/GO/" class="category-chain-item">GO</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E7%BB%8F%E9%AA%8C/">#经验</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>编程经验与规范</div>
+      <div>http://example.com/2022/06/28/C++/Effective C++/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Tenon Lee</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年6月28日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/06/28/C++/C++/" title="编程经验与规范">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">编程经验与规范</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/06/12/GO/%E8%A7%84%E8%8C%83%E4%B8%8E%E6%A0%87%E5%87%86/" title="编程经验与规范">
+                        <span class="hidden-mobile">编程经验与规范</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
